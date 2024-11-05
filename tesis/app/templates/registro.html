@@ -1,0 +1,76 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+{% load static %}
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: #f0f2f5;
+        font-family: Arial, sans-serif;
+    }
+    .register-container {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        animation: fadeIn 1s ease-in-out;
+        width: 100%;
+        max-width: 400px;
+    }
+    .register-container h2 {
+        margin-bottom: 20px;
+        color: #00796b;
+    }
+    .register-container form {
+        display: flex;
+        flex-direction: column;
+    }
+    .register-container form input,
+    .register-container form button {
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .register-container form button {
+        background: #00796b;
+        color: #fff;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    .register-container form button:hover {
+        background: #004d40;
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+
+<div class="register-container">
+    <h2>Registro</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.username }}
+        {{ form.email }}
+        {{ form.password1 }}
+        {{ form.password2 }}
+        <button type="submit">Registrarse</button>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Ir a la Página Principal</a>
+    </form>
+</div>
+
+{% endblock content %}

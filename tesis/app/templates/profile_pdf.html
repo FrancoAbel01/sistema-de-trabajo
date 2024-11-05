@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil de {{ user.username }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .info {
+            margin-bottom: 20px;
+        }
+        .tasks {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .tasks th, .tasks td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .tasks th {
+            background-color: #f2f2f2;
+        }
+        .total-hours {
+            margin-top: 20px;
+            text-align: right;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>Perfil de {{ user.username }}</h2>
+    <div class="info">
+        <p><strong>Nombre:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+    </div>
+    <h3>Tareas Asignadas</h3>
+    <table class="tasks">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Descripción</th>
+                <th>Fecha de Ejecución</th>
+                <th>Hora de Inicio</th>
+                <th>Hora de Fin</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task_assignment in assigned_tasks %}
+            <tr>
+                <td>{{ task_assignment.task.title }}</td>
+                <td>{{ task_assignment.task.description }}</td>
+                <td>{{ task_assignment.task.execution_date|date:"d M Y" }}</td>
+                <td>{{ task_assignment.task.start_time|time:"H:i" }}</td>
+                <td>{{ task_assignment.task.end_time|time:"H:i" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p class="total-hours">Total de horas trabajadas: {{ total_hours|floatformat:2 }} horas</p>
+</body>
+</html>

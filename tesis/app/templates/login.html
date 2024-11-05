@@ -1,0 +1,142 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% load static %}
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f0f2f5;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+    margin: 0;
+  }
+
+  .login-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    z-index: 10;
+  }
+
+  .login-container h2 {
+    margin-bottom: 20px;
+    color: #255f7e;
+  }
+
+  .login-container form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .login-container form input,
+  .login-container form button {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .login-container form button {
+    background: #255f7e;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .login-container form button:hover {
+    background: #1e4a63;
+  }
+
+  .login-container .btn-secondary {
+    background: #6c757d;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+  }
+
+  .login-container .btn-secondary:hover {
+    background: #5a6268;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  #particles {
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+</style>
+
+<div id="particles"></div>
+
+<div class="login-container">
+  <h2>Iniciar Sesión</h2>
+  <form method="POST" action="/login/">
+    {% csrf_token %}
+    {{ form.username }}
+    {{ form.password }}
+    <button type="submit">Login</button>
+    <a href="{% url 'inicio' %}" class="btn btn-secondary">Ir a la Página Principal</a>
+  </form>
+</div>
+
+<script>
+  const colors = ["#1982C4", "#4a90e2", "#1e4a63"];
+  const numParticles = 50;
+  const particles = [];
+  const particlesContainer = document.getElementById('particles');
+
+  function createParticle() {
+    const particle = document.createElement('div');
+    particle.style.width = particle.style.height = `${Math.random() * 10 + 5}px`;
+    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    particle.style.position = 'absolute';
+    particle.style.borderRadius = '50%';
+    particle.style.top = '100%';
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.animation = `moveUp ${Math.random() * 5 + 5}s ease-in forwards`;
+    particlesContainer.appendChild(particle);
+    particles.push(particle);
+  }
+
+  for (let i = 0; i < numParticles; i++) {
+    createParticle();
+  }
+
+  particlesContainer.innerHTML += `
+    <style>
+      @keyframes moveUp {
+        to {
+          transform: translateY(-100vh) translateX(${Math.random() * 20 - 10}px);
+          opacity: 0;
+        }
+      }
+    </style>
+  `;
+</script>
+{% endblock %}

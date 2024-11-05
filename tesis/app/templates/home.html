@@ -1,0 +1,210 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+{% load static %}
+
+<style>
+  @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #fafafa;
+  }
+
+  p {
+    font-size: 1.1em;
+    font-weight: 300;
+    line-height: 1.7em;
+    color: #999;
+  }
+
+  a, a:hover, a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .navbar {
+    padding: 15px 10px;
+    background: #fff;
+    border: none;
+    margin-bottom: 40px;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+  }
+
+  #sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    background: #255f7e; /* Primary color */
+    color: #fff;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    transition: all 0.3s;
+  }
+
+  #sidebar.active {
+    margin-left: -250px;
+  }
+
+  #sidebar .sidebar-header {
+    padding: 20px;
+    background: #204d6b; /* Slightly darker shade */
+  }
+
+  #sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #1b3f56; /* Even darker shade */
+  }
+
+  #sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+  }
+
+  #sidebar ul li a:hover {
+    color: #255f7e;
+    background: #fff;
+  }
+
+  #sidebar ul li.active>a,
+  a[aria-expanded="true"] {
+    color: #fff;
+    background: #204d6b;
+  }
+
+  #content {
+    margin-left: 250px;
+    padding: 20px;
+    width: calc(100% - 250px);
+    min-height: 100vh;
+    transition: all 0.3s;
+  }
+
+  @media (max-width: 768px) {
+    #sidebar {
+      margin-left: -250px;
+    }
+
+    #sidebar.active {
+      margin-left: 0;
+    }
+
+    #content {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+
+  #calendar {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+<div class="wrapper">
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <h3>My App</h3>
+    </div>
+    <ul class="list-unstyled components">
+      
+      <li>
+
+        <a href="#submenu1" data-bs-toggle="collapse" class="dropdown-toggle">
+          <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">Tarea</span>
+        </a>
+        <ul class="collapse list-unstyled" id="submenu1">
+          {% if user.is_staff %}
+          <li><a href="{% url 'create_task' %}">Nueva Tarea</a></li>
+          {% endif %}
+          <li><a href="{% url 'task_list' %}">Tareas</a></li>
+          <li><a href="{% url 'asignar_task' %}">Asignar Tarea</a></li>
+          <li><a href="{% url 'mis_task' %}">Mis Tarea</a></li>
+        </ul>
+      </li>
+      {% if user.is_staff %}
+      <li>
+        <a href="#submenu2" data-bs-toggle="collapse" class="dropdown-toggle">
+          <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">Usuario</span>
+        </a>
+        <ul class="collapse list-unstyled" id="submenu2">
+          <li><a href="{% url 'registro' %}">Registrar Usuario</a></li>
+          <li><a href="{% url 'user_list' %}">Lista de Usuarios</a></li>
+        </ul>
+      </li>
+      {% endif %}
+      <li><a class="nav-link" href="{% url 'user' %}">Mi Perfil</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+  </nav>
+  <!-- Page Content -->
+<div id="content">
+    <div class="container mt-3">
+      <h2 class="text-center">Bienvenido, {{ usuario.username }}!</h2>
+      <h3 class="text-center">Tareas Asignadas</h3>
+      <div id="calendar" class="mt-4"></div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      themeSystem: 'bootstrap',
+      events: [
+        {% for tarea in tareas_asignadas %}
+        {
+          title: '{{ tarea.task.title }}',
+          start: '{{ tarea.task.execution_date|date:"Y-m-d" }}T{{ tarea.task.start_time|time:"H:i:s" }}',
+          end: '{{ tarea.task.execution_date|date:"Y-m-d" }}T{{ tarea.task.end_time|time:"H:i:s" }}',
+          backgroundColor: '#255f7e', // Color de fondo del evento
+          borderColor: '#255f7e', // Color del borde del evento
+          textColor: '#ffffff', // Color del texto del evento
+        },
+        {% endfor %}
+        {% for tarea in tareas_personales %}
+        {
+          title: '{{ tarea.title }}',
+          start: '{{ tarea.execution_date|date:"Y-m-d" }}T{{ tarea.start_time|time:"H:i:s" }}',
+          end: '{{ tarea.execution_date|date:"Y-m-d" }}T{{ tarea.end_time|time:"H:i:s" }}',
+          backgroundColor: '#7e255f', // Color de fondo del evento
+          borderColor: '#7e255f', // Color del borde del evento
+          textColor: '#ffffff', // Color del texto del evento
+        },
+        {% endfor %}
+      ],
+      eventDidMount: function (info) {
+        var tooltip = new bootstrap.Tooltip(info.el, {
+          title: info.event.title,
+          placement: 'top',
+          trigger: 'hover'
+        });
+      }
+    });
+    calendar.render();
+  });
+</script>
+
+<script src="{% static 'js/index.global.js' %}"></script>
+
+{% endblock content %}

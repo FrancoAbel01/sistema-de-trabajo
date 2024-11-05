@@ -1,0 +1,105 @@
+
+{% extends 'layout.html' %}
+{% block content %}
+<style>
+  @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #fafafa;
+  }
+  .profile-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+  .profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .profile-header h2 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+  }
+  .table-responsive {
+    margin-top: 20px;
+  }
+  .table th, .table td {
+    text-align: left;
+    vertical-align: middle;
+  }
+  .btn-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+  }
+</style>
+
+<div class="profile-container">
+  <div class="profile-header">
+    <h2>Perfil de {{ usuario.username }}</h2>
+  </div>
+  <h3>Información del Usuario</h3>
+  <p><strong>Nombre:</strong> {{ usuario.username }} {{ usuario.last_name }}</p>
+  <p><strong>Email:</strong> {{ usuario.email }}</p>
+
+  <h3>Tareas Asignadas</h3>
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Título</th>
+          <th>Descripción</th>
+          <th>Fecha de Ejecución</th>
+          <th>Hora de Inicio</th>
+          <th>Hora de Fin</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task_assignment in assigned_tasks %}
+        <tr>
+          <td>{{ task_assignment.task.title }}</td>
+          <td>{{ task_assignment.task.description }}</td>
+          <td>{{ task_assignment.task.execution_date|date:"d M Y" }}</td>
+          <td>{{ task_assignment.task.start_time|time:"H:i" }}</td>
+          <td>{{ task_assignment.task.end_time|time:"H:i" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Tareas Personales</h3>
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Título</th>
+          <th>Descripción</th>
+          <th>Fecha de Ejecución</th>
+          <th>Hora de Inicio</th>
+          <th>Hora de Fin</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in personal_tasks %}
+        <tr>
+          <td>{{ task.title }}</td>
+          <td>{{ task.description }}</td>
+          <td>{{ task.execution_date|date:"d M Y" }}</td>
+          <td>{{ task.start_time|time:"H:i" }}</td>
+          <td>{{ task.end_time|time:"H:i" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="btn-container">
+    <a href="{% url 'home' %}" class="btn btn-secondary">Volver a Inicio</a>
+  </div>
+</div>
+{% endblock %}

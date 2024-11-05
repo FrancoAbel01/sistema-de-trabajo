@@ -1,0 +1,208 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% load widget_tweaks %}
+
+<style>
+  @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #fafafa;
+  }
+
+  .wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+  }
+
+  #sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    background: #255f7e;  /* Primary color */
+    color: #fff;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    transition: all 0.3s;
+  }
+
+  #sidebar .sidebar-header {
+    padding: 20px;
+    background: #204d6b;  /* Slightly darker shade */
+  }
+
+  #sidebar ul.components {
+    padding: 20px 0;
+  }
+
+  #sidebar ul li a {
+    padding: 10px;
+    display: block;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  #sidebar ul li a:hover {
+    color: #255f7e;
+    background: #fff;
+  }
+
+  #content {
+    width: 100%;
+    padding: 20px;
+    transition: all 0.3s;
+    margin-left: 250px;
+  }
+
+  @media (max-width: 768px) {
+    #sidebar {
+      margin-left: -250px;
+    }
+    #sidebar.active {
+      margin-left: 0;
+    }
+    #content {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+
+  /* Form styles */
+  .form-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.8s ease-in-out;
+  }
+
+  .form-container h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 8px;
+  }
+
+  .modern-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #f4f7f6;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+
+  .modern-input:focus {
+    border-color: #255f7e; /* Primary color */
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(37, 95, 126, 0.1); /* Primary color with opacity */
+    outline: none;
+  }
+
+  .btn-modern {
+    background-color: #255f7e; /* Primary color */
+    color: #fff;
+    font-size: 16px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .btn-modern:hover {
+    background-color: #204d6b; /* Slightly darker shade */
+    transform: scale(1.02);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<div class="wrapper">
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <h3>My App</h3>
+    </div>
+    <ul class="list-unstyled components">
+      {% if user.is_staff %}
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li>
+        <a href="#submenu1" data-bs-toggle="collapse" class="dropdown-toggle">Tarea</a>
+        <ul class="collapse list-unstyled" id="submenu1">
+          <li><a href="{% url 'task_list' %}">Tareas</a></li>
+          <li><a href="{% url 'asignar_task' %}">Asignar Tarea</a></li>
+          <li><a href="{% url 'mis_task' %}">Mis Tarea</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#submenu2" data-bs-toggle="collapse" class="dropdown-toggle">Usuario</a>
+        <ul class="collapse list-unstyled" id="submenu2">
+          <li><a href="{% url 'registro' %}">Registrar Usuario</a></li>
+          <li><a href="{% url 'user_list' %}">Lista de Usuarios</a></li>
+        </ul>
+      </li>
+      {% endif %}
+      <li><a class="nav-link" href="{% url 'user' %}">Mi Perfil</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+  </nav>
+  <!-- Page Content -->
+  <div id="content">
+    <div class="form-container">
+      <h2>Crear Actividad</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="id_title" class="form-label">Título</label>
+          {{ form.title|add_class:"modern-input" }}
+        </div>
+        <div class="form-group">
+          <label for="id_description" class="form-label">Descripción</label>
+          {{ form.description|add_class:"modern-input" }}
+        </div>
+        <div class="form-group">
+          <label for="id_execution_date" class="form-label">Fecha de Ejecución</label>
+          {{ form.execution_date|add_class:"modern-input datepicker" }}
+        </div>
+        <div class="form-group">
+          <label for="id_start_time" class="form-label">Hora de Inicio</label>
+          {{ form.start_time|add_class:"modern-input timepicker" }}
+        </div>
+        <div class="form-group">
+          <label for="id_end_time" class="form-label">Hora de Fin</label>
+          {{ form.end_time|add_class:"modern-input timepicker" }}
+        </div>
+        <button type="submit" class="btn-modern">Crear Tarea</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
